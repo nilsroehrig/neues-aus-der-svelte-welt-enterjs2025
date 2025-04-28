@@ -1,5 +1,5 @@
 import {type Result, tryCatchAsync} from "../utils/tryCatch";
-import shuffle from 'just-shuffle'
+import {toShuffled} from "../utils/array";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -22,27 +22,19 @@ export function createTriviaDataSource() {
     }) {
       questions.length = 0;
 
-      const questionResults = await Promise.all([
-        loadQuestions("easy", 5),
-        loadQuestions("medium", 3),
-        loadQuestions("hard", 2)
-      ])
+      const [error, loadedQuestions] = await loadQuestions(10);
 
-      questionResults.map(([error, loadedQuestions]) => {
-        if(error) {
-          return console.error(error);
-        }
+      if (error) {
+        return console.error(error);
+      }
 
-        questions.push(...loadedQuestions);
-      })
-
-      shuffle(questions);
+      questions.push(...toShuffled(loadedQuestions));
     },
     get questions() {
       return questions
     },
     get status() {
-      if(questions.length === 0) {
+      if (questions.length === 0) {
         return 'pending';
       }
 
@@ -51,20 +43,20 @@ export function createTriviaDataSource() {
   }
 }
 
-async function loadQuestions(difficulty: Difficulty, amount: number): Promise<Result<Question[]>> {
-  const [fetchError, response] = await tryCatchAsync(() => fetch(`https://opentdb.com/api.php?amount=${Math.floor(amount)}&difficulty=${difficulty}&type=multiple`));
+async function loadQuestions(amount: number): Promise<Result<Question[]>> {
+  const [fetchError, response] = await tryCatchAsync(() => fetch(`https://opentdb.com/api.php?amount=${Math.floor(amount)}&type=multiple`));
 
-  if(fetchError) {
+  if (fetchError) {
     return [fetchError, null];
   }
 
-  if(!response.ok) {
+  if (!response.ok) {
     return [new Error(response.statusText), null]
   }
 
   const [parseError, parsedJSON] = await tryCatchAsync(() => response.json());
 
-  if(parseError) {
+  if (parseError) {
     return [parseError, null];
   }
 

@@ -1,5 +1,5 @@
 import {type Result, tryCatchAsync} from "../utils/tryCatch";
-import {toShuffled} from "../utils/array";
+import shuffle from "just-shuffle";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -16,19 +16,17 @@ export function createTriviaDataSource() {
 
   return {
     async init(options = {
-      easy: 5,
-      medium: 3,
-      hard: 2
+      questions: 10
     }) {
       questions.length = 0;
 
-      const [error, loadedQuestions] = await loadQuestions(10);
+      const [error, loadedQuestions] = await loadQuestions(options.questions);
 
       if (error) {
         return console.error(error);
       }
 
-      questions.push(...toShuffled(loadedQuestions));
+      questions.push(...shuffle(loadedQuestions));
     },
     get questions() {
       return questions
@@ -60,11 +58,11 @@ async function loadQuestions(amount: number): Promise<Result<Question[]>> {
     return [parseError, null];
   }
 
-  return parsedJSON.results.map((result: Record<string, unknown>) => ({
+  return [null, parsedJSON.results.map((result: Record<string, unknown>) => ({
     difficulty: result.difficulty,
     category: result.category,
     question: result.question,
     correctAnswer: result.correct_answer,
     incorrectAnswers: result.incorrect_answers
-  }))
+  }))]
 }

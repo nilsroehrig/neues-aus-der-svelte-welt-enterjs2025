@@ -1,8 +1,10 @@
 type Failure = [Error, null];
 type Success<TValue> = [null, TValue];
-export type Result<TValue> = Failure | Success<TValue>
+export type Result<TValue> = Failure | Success<TValue>;
 
-export async function tryCatchAsync<TValue>(fn: () => Promise<TValue>): Promise<Result<TValue>> {
+export async function tryCatchAsync<TValue>(
+  fn: () => Promise<TValue>,
+): Promise<Result<TValue>> {
   try {
     return [null, await fn()];
   } catch (cause) {
@@ -10,6 +12,6 @@ export async function tryCatchAsync<TValue>(fn: () => Promise<TValue>): Promise<
       return [cause, null];
     }
 
-    return [new Error(String(cause), {cause}), null];
+    return [new Error(String(cause), { cause }), null];
   }
 }

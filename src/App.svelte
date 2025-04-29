@@ -1,15 +1,25 @@
+<script lang="ts">
+  import Game from "./lib/components/Game.svelte";
+
+  let currentStage: "menu" | "game" | "scores" = "game";
+</script>
+
 <main>
   <div class="game">
     <article>
       <header>Sveltenstein</header>
-      <ul>
-        <li>
-          <button>New Game</button>
-        </li>
-        <li>
-          <button>Highscore</button>
-        </li>
-      </ul>
+      {#if currentStage === "menu"}
+        <ul>
+          <li>
+            <button>New Game</button>
+          </li>
+          <li>
+            <button>Scores</button>
+          </li>
+        </ul>
+      {:else if currentStage === "game"}
+        <Game/>
+      {/if}
     </article>
   </div>
 </main>

@@ -1,9 +1,10 @@
 import { type Result, tryCatchAsync } from "../utils/tryCatch";
 import shuffle from "just-shuffle";
+import { wait } from "../utils/timers";
 
 type Difficulty = "easy" | "medium" | "hard";
 
-interface Question {
+export interface Question {
   difficulty: Difficulty;
   category: string;
   question: string;
@@ -12,8 +13,13 @@ interface Question {
 }
 
 export function createQuizDataSource() {
-  const questions: Question[] = $state([]);
-  let score = 0;
+  let questions: Question[] = $state([]);
+  let score = $state(0);
+
+  let currentQuestionIndex: null | number = $state(null);
+  let currentQuestion: Question | null = $derived(
+    currentQuestionIndex === null ? null : questions[currentQuestionIndex],
+  );
 
   return {
     async init(
@@ -30,22 +36,25 @@ export function createQuizDataSource() {
       }
 
       questions.push(...shuffle(loadedQuestions));
+      currentQuestionIndex = 0;
     },
-    checkAnswerAndUpdateScore(
-      questionIndex: number,
-      answer: string,
-    ): boolean {
-      const question = questions[questionIndex];
-      if (question?.correctAnswer === answer) {
-        score++;
-        return true;
-      }
 
-      return false;
+    updateScore(answer: string): void {
+      const isCorrectAnswer = currentQuestion?.correctAnswer === answer;
+
+      if (isCorrectAnswer) {
+        score++;
+      }
     },
+
+    nextQuestion() {
+      currentQuestionIndex = (currentQuestionIndex ?? 0) + 1;
+    },
+
     get questions() {
       return questions;
     },
+
     get status() {
       if (questions.length === 0) {
         return "pending";
@@ -53,8 +62,13 @@ export function createQuizDataSource() {
 
       return "loaded";
     },
+
     get score() {
       return score;
+    },
+
+    get currentQuestion() {
+      return currentQuestion;
     },
   };
 }

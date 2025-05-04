@@ -26,7 +26,10 @@
           </li>
         </ul>
       {:else}
-        <Game {quiz} />
+        <Game
+          {quiz}
+          onFinish={() => quiz = null}
+        />
       {/if}
     </article>
   </div>

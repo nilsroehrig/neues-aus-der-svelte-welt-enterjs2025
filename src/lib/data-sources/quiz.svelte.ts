@@ -61,7 +61,11 @@ export function createQuizDataSource() {
         return "pending";
       }
 
-      return "loaded";
+      if (currentQuestionIndex === questions.length) {
+        return "finished";
+      }
+
+      return "started";
     },
 
     get score() {

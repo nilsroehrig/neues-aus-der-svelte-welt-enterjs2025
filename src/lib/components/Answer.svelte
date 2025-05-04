@@ -25,10 +25,14 @@
   .correct {
     --pico-border-color: var(--pico-color-green-500);
     --pico-color: var(--pico-color-green-500);
+    --pico-primary-hover: var(--pico-color-green-500);
+    --pico-primary-hover-border: var(--pico-color-green-500);
   }
 
-  .incorrect {
+  .incorrect, .incorrect:hover {
     --pico-border-color: var(--pico-color-red-500);
     --pico-color: var(--pico-color-red-500);
+    --pico-primary-hover: var(--pico-color-red-500);
+    --pico-primary-hover-border: var(--pico-color-red-500);
   }
 </style>

@@ -30,3 +30,15 @@
     />
   {/each}
 </div>
+
+<style>
+  .answers {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  p {
+    text-align: center;
+  }
+</style>

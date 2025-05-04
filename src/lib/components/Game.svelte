@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { createQuizDataSource } from "../data-sources/quiz.svelte.js";
+  import { createQuizDataSource, type QuizDataSource } from "../data-sources/quiz.svelte.js";
   import Question from "./Question.svelte";
   import { wait } from "../utils/timers";
 
-  const quiz = createQuizDataSource();
+  const { quiz }: { quiz: QuizDataSource } = $props();
+
   let isLoadingQuestions = $derived(quiz.status === "pending");
 
   $effect(() => {

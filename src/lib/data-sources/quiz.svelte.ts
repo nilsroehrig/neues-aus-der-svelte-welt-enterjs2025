@@ -1,6 +1,5 @@
 import { type Result, tryCatchAsync } from "../utils/tryCatch";
 import shuffle from "just-shuffle";
-import { wait } from "../utils/timers";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -11,6 +10,8 @@ export interface Question {
   incorrectAnswers: string[];
   correctAnswer: string;
 }
+
+export type QuizDataSource = ReturnType<typeof createQuizDataSource>;
 
 export function createQuizDataSource() {
   let questions: Question[] = $state([]);
